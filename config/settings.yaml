@@ -1,0 +1,30 @@
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  user: root
+  password: 123456
+  database: gin_chat
+  log_level: info
+  log_file: ./log/mysql.log
+system:
+  host: 0.0.0.0
+  port: 8080
+  env: release
+logger:
+  level: info
+  prefix: "[chat]"
+  direct: ./logs
+  showLine: false
+  logInConsole: false
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: ""
+  db: 0
+  pool_size: 10
+  mini_dle_conns: 10
+jwt:
+  expire_time: 24 # hour
+  issuer: "gin_chat"
+  subject: "chat"
+  grant_scope: "chat,read user info"

@@ -1,0 +1,79 @@
+definitions:
+  res.Response:
+    properties:
+      code:
+        description: 0成功
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/index:
+    get:
+      description: 返回首页json公用数据
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{"message":"pong"},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 获取首页数据
+      tags:
+      - 首页数据
+  /api/register:
+    post:
+      consumes:
+      - application/json
+      description: 注册新用户
+      parameters:
+      - description: 用户名
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: 密码
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: 确认密码
+        in: body
+        name: re_password
+        required: true
+        schema:
+          type: string
+      - description: 手机号码
+        in: body
+        name: phone
+        required: true
+        schema:
+          type: string
+      - description: 邮箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: 头像
+        in: body
+        name: avatar
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: 创建用户
+      tags:
+      - 用户
+swagger: "2.0"
