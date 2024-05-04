@@ -56,7 +56,7 @@ func Register(c *gin.Context) {
 	// 获取用户设备信息
 	userAgent := c.Request.UserAgent()
 	if userAgent == "" {
-		res.FailWithMsg("非法请求", c)
+		res.FailWithCode(res.IllegalRequests, c)
 		return
 	}
 	userInfo := UserRegister{}
@@ -67,12 +67,11 @@ func Register(c *gin.Context) {
 	}
 
 	// 校验用户是否已经注册
-	u := FindUserByPhone(userInfo.Phone)
+	u := models.FindUserByPhone(userInfo.Phone)
 	if u.ID != 0 {
-		res.FailWithMsg("用户已注册", c)
+		res.FailWithCode(res.UserIsExist, c)
 		return
 	}
-
 	// 使用加密安全的随机数生成器
 	src := rand.NewSource(uint64(time.Now().UnixNano()))
 	r := rand.New(src)
@@ -110,14 +109,6 @@ func Register(c *gin.Context) {
 	res.OkWithMsg("注册成功", c)
 }
 
-func FindUserByPhone(phone string) (user models.UserBasic) {
-	user = models.UserBasic{}
-	if global.DB.Where("phone = ?", phone).First(&user).Error != nil {
-		return
-	}
-	return user
-}
-
 type UserLogin struct {
 	Account      string `form:"account" binding:"required" msg:"账号不能为空，账号为手机号码或邮箱"`
 	Password     string `form:"password" binding:"required" msg:"密码不能为空"`
@@ -143,9 +134,14 @@ func Login(c *gin.Context) {
 		res.FailWithMsg(validators.GetValidMsg(err, &loginInfo), c)
 		return
 	}
-	user := models.UserBasic{
-		Email: loginInfo.Account,
+	user := models.UserBasic{}
+	isPhone := utils.CheckStrIsPhone(loginInfo.Account)
+	if isPhone {
+		user.Phone = loginInfo.Account
+	} else {
+		user.Email = loginInfo.Account
 	}
+
 	selectSlice := []string{
 		"name",
 		"password",
@@ -157,15 +153,8 @@ func Login(c *gin.Context) {
 	}
 	err = user.FindUserByStruct(selectSlice)
 	if err != nil {
-		if err.Error() == "record not found" {
-			user.Email = ""
-			user.Phone = loginInfo.Account
-			err = user.FindUserByStruct(selectSlice)
-			if err != nil {
-				res.FailWithMsg("该用户不存在", c)
-				return
-			}
-		}
+		res.FailWithCode(res.UserNotFound, c)
+		return
 	}
 	rdbUserTokenKey := fmt.Sprintf("user_%s", user.Identity)
 	oToken := global.RDB.Get(context.Background(), rdbUserTokenKey).Val()
@@ -173,11 +162,12 @@ func Login(c *gin.Context) {
 		myClaims, err := utils.ParseTokenRs256(oToken)
 		global.Log.Infof("解析token: %v", myClaims)
 		if err != nil {
+			global.Log.Errorf("解析token失败: %v", err)
 			res.FailWithMsg("token已过期", c)
 			return
 		}
-		expirationTime, err := myClaims.GetExpirationTime()
-		global.Log.Infof("过期时间: %v", expirationTime)
+		//expirationTime, err := myClaims.GetExpirationTime()
+		//isOverdue := time.Now().After(expirationTime.Time)
 		if err == nil {
 			res.OkWithData(user, c)
 			return

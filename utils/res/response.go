@@ -16,11 +16,6 @@ type ListResponse[T any] struct {
 	Count int64 `json:"count"`
 }
 
-const (
-	SUCCESS = 0
-	ERROR   = -1
-)
-
 func Result(code int, data any, msg string, c *gin.Context) {
 	c.JSON(http.StatusOK, Response{
 		Code: code,

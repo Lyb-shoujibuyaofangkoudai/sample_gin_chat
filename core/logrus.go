@@ -3,12 +3,11 @@ package core
 import (
 	"bytes"
 	"fmt"
+	"gin_chat/global"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"
 	"path"
-	"path/filepath"
-	"time"
 )
 
 const (
@@ -66,10 +65,6 @@ func InitLogger() *logrus.Logger {
 	}
 	mLog.SetLevel(level) // 设置最低日志级别
 	InitDefaultLogger()
-	// todo: 设置输出到按日期命名的文件
-	//logFilePath := getLogFilePath()
-	//file, _ := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
-	//mLog.Out = file
 
 	return mLog
 }
@@ -86,19 +81,19 @@ func InitDefaultLogger() {
 	logrus.SetLevel(level) // 设置最低日志级别
 }
 
-func getLogFilePath() string {
-	// 指定日志文件存放目录
-	logDir := "logs"
+type LogrusGormLogger struct {
+	*logrus.Logger
+}
 
-	// 创建或确认目录存在
-	if err := os.MkdirAll(logDir, 0o755); err != nil {
-		panic(fmt.Sprintf("Failed to create log directory: %v", err))
-	}
-
-	// 生成以当前日期命名的日志文件名
-	t := time.Now()
-	fileName := fmt.Sprintf("%s_%s.log", t.Format("2006-01-02"), "app")
-
-	// 返回完整文件路径
-	return filepath.Join(logDir, fileName)
+// Printf 实现gorm/logger.Writer接口
+func (m *LogrusGormLogger) Printf(format string, v ...interface{}) {
+	logStr := fmt.Sprintf(format, v...)
+	log := m.WithFields(logrus.Fields{
+		"Type":    global.RouterLog,
+		"Format":  format,
+		"Values":  v,
+		"Message": logStr,
+	})
+	//利用loggus记录日志
+	log.Info(logStr)
 }

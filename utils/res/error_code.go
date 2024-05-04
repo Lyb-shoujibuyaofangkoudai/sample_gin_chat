@@ -9,10 +9,16 @@ import (
 type ErrorCode int
 
 const (
-	notLoggedIn      ErrorCode = 401
-	SettingsError    ErrorCode = 1001
-	ParamsError      ErrorCode = 1002
-	FileSizeExceeded ErrorCode = 1010
+	SUCCESS = 0
+	ERROR   = -1
+)
+
+const (
+	IllegalRequests  ErrorCode = 400
+	NotLoggedIn      ErrorCode = 401
+	FileSizeExceeded ErrorCode = 2001
+	UserNotFound     ErrorCode = 3001
+	UserIsExist      ErrorCode = 3003
 )
 
 type ErrorMap map[ErrorCode]string

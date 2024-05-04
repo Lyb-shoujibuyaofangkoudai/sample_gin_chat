@@ -47,3 +47,11 @@ type UserInfo struct {
 	Signature string `gorm:"size:512" json:"signature"`
 	Gender    int    `gorm:"default:1,comment:1男2女" json:"gender"`
 }
+
+func FindUserByPhone(phone string) (user UserBasic) {
+	user = UserBasic{}
+	if global.DB.Where("phone = ?", phone).First(&user).Error != nil {
+		return
+	}
+	return user
+}

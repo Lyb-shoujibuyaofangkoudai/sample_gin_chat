@@ -8,8 +8,6 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"log"
-	"os"
 	"time"
 )
 
@@ -20,7 +18,8 @@ func InitGorm() *gorm.DB {
 		return nil
 	}
 	mySqlLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags),
+		//log.New(os.Stdout, "\r\n", log.LstdFlags),
+		&LogrusGormLogger{global.Log},
 		logger.Config{
 			SlowThreshold: time.Second, // Slow SQL threshold
 			LogLevel:      logger.Info,

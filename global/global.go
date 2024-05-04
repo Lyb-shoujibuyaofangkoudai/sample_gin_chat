@@ -11,3 +11,8 @@ var (
 	RDB *redis.Client
 	Log *logrus.Logger
 )
+
+const (
+	RouterLog = "router"
+	GormLog   = "gorm"
+)

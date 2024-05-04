@@ -1,6 +1,7 @@
 package router
 
 import (
+	"gin_chat/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
@@ -18,7 +19,7 @@ func InitRouter() *gin.Engine {
 	systemSettings := viper.GetStringMapString("system")
 	gin.SetMode(systemSettings["env"])
 	router := gin.Default()
-
+	router.Use(middleware.LoggerMiddleware())
 	routerGroup := router.Group("api") // 地址前缀
 	routerGroupApp := RouterApp{
 		router:   router,
