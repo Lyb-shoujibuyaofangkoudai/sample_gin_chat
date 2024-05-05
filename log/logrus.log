@@ -1,0 +1,11 @@
+[chat][2024-05-05 09:20:33] [info]  数据库连接成功 
+[chat][2024-05-05 09:20:33] [info]  初始化redis成功 
+[chat][2024-05-05 09:20:33] [info]  服务监听地址为: 0.0.0.0:8080 
+[chat][2024-05-05 09:19:18] [info]  [32mF:/01project/go/gin_chat/models/UserBasic.go:39
+[0m[33m[1.193ms] [34;1m[rows:1][0m SELECT `name`,`password`,`phone`,`email`,`avatar`,`identity`,`device_info` FROM `user_basic` WHERE `user_basic`.`phone` = '19828165029' AND `user_basic`.`deleted_at` IS NULL ORDER BY `user_basic`.`id` LIMIT 1 
+[chat][2024-05-05 09:19:18] [info]  解析token: &{0 魏艳 chat,read user info {gin_chat chat [Android_APP IOS_APP WEB_APP] 2024-05-06 09:02:34 +0800 CST 2024-05-05 09:02:35 +0800 CST 2024-05-05 09:02:34 +0800 CST SxG6Fhtyk1}} 
+[chat][2024-05-05 09:19:18] [info]  
+请求类型： POST 
+请求地址： /api/login  
+请求query参数： map[] 
+请求body参数： 
